@@ -3,6 +3,8 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 import { IService } from '../../services/IService';
 
+declare var SqlServer: any;
+
 @IonicPage()
 @Component({
   templateUrl: 'item-details-form.html'
@@ -24,5 +26,29 @@ export class ItemDetailsPageForm {
       navCtrl.setRoot("HomePage");
     }
 
+    // this.doSomething();
+
+    SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip", function(event) {
+      console.log(JSON.stringify(event),'sql');
+      this.getdata();
+    }, function(error) {
+      console.log(JSON.stringify(error),'sqlerror');
+    });
+
+  }
+
+  // doSomething() {
+  //   SqlServer.init('182.50.133.111', 'MSSQLSERVER', 'webeskyuser', '24140246', result => {
+  //     console.log(JSON.stringify(result),'something');
+  //   })
+  // }
+
+  getdata()
+  {
+    SqlServer.executeQuery("Select * from MeeshoReturns", function(event) {
+      alert(JSON.stringify(event));
+    }, function(error) {
+      alert("Error : " + JSON.stringify(error));
+    });	
   }
 }
