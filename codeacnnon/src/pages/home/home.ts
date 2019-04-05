@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController } from 'ionic-angular';
-import { HomeService } from '../../services/home-service';
-import { AppSettings } from '../../services/app-settings';
 
 @IonicPage()
 @Component({
