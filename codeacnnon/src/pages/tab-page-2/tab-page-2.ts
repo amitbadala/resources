@@ -10,6 +10,10 @@ import { IonicPage } from 'ionic-angular';
 })
 export class TabPage2 implements OnChanges {
     params:any = {};
+    todo = {
+      title: '',
+      description: ''
+    };
 
     constructor(private tabsService: TabsService, private toastCtrl: ToastService) {
       this.tabsService.load("tab2").subscribe(snapshot => {

@@ -9,6 +9,10 @@ import { IonicPage } from 'ionic-angular';
   providers: [TabsService, ToastService]
 })
 export class TabPage1 implements OnChanges {
+  todo = {
+    title: '',
+    description: ''
+  };
 
   params:any = {};
 

@@ -1,9 +1,23 @@
 <!---Settings TAB lauout-1-->
 <ion-content tabPage1>
-  <div background-size [ngStyle]="{'background-image': 'url(' + params.backgroundImage + ')'}" *ngIf=" params.backgroundImage != null">
-    <div padding class="tab-decription">
-      <h2 tabs-title text-center>{{params.title}}</h2>
-      <p tabs-subtitle text-center>{{params.description}}</p>
-    </div>
-  </div>
+  <form (ngSubmit)="logForm()">
+      <ion-item>
+          <ion-label floating>SubOrder Id *</ion-label>
+          <ion-input required type="text" [(ngModel)]="todo.title" name="title"></ion-input>
+          <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
+      </ion-item>
+  
+      <ion-item>
+          <ion-label floating>Reverse Label id</ion-label>
+          <ion-input required type="text" [(ngModel)]="todo.title" name="title"></ion-input>
+          <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
+      </ion-item>
+      
+      <ion-item>
+          <ion-label floating>Return Date</ion-label> 
+          <ion-datetime   [placeholder]="todo.title" [(ngModel)]="todo.title" [ngModelOptions]="{standalone: true}"></ion-datetime>
+          <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
+      </ion-item>
+    <button ion-button type="submit" block>Update</button>
+  </form>
 </ion-content>

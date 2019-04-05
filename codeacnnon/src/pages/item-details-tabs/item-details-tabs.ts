@@ -22,9 +22,8 @@ export class ItemDetailsPageTabs {
 
       if (this.params.tabsLayout1) {
         this.params.data = [
-          { page: "TabPage1", title: "tab 1" },
-          { page: "TabPage2", title: "tab 2" },
-          { page: "TabPage3", title: "tab 3" }
+          { page: "TabPage1", title: "RTO" },
+          { page: "TabPage2", title: "Return" }
         ];
       }
 

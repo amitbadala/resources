@@ -1,9 +1,41 @@
 <!---Settings TAB lauout-2-->
 <ion-content tabPage2>
-  <div background-size [ngStyle]="{'background-image': 'url(' + params.backgroundImage + ')'}" *ngIf=" params.backgroundImage != null">
-    <div padding class="tab-decription">
-      <h2 tabs-title text-center>{{params.title}}</h2>
-      <p tabs-subtitle text-center>{{params.description}}</p>
-    </div>
-  </div>
+  <h3 text-center>Return Products</h3>
+    <form (ngSubmit)="logForm()">
+  <ion-row>
+      <ion-col col-8>
+        <ion-item>
+            <ion-label floating>SubOrder Id *</ion-label>
+            <ion-input required type="text" [(ngModel)]="todo.title" name="title"></ion-input>
+            <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
+        </ion-item>
+      </ion-col>
+      <ion-col col-4>
+          <ion-item>
+          <button ion-button block>Scan</button> 
+          </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+        <ion-col col-8>
+          <ion-item>
+              <ion-label floating>Reverse Label Id *</ion-label>
+              <ion-input required type="text" [(ngModel)]="todo.title" name="title"></ion-input>
+              <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
+          </ion-item>
+        </ion-col>
+        <ion-col col-4>
+            <ion-item>
+            <button ion-button block>Scan</button> 
+            </ion-item>
+        </ion-col>
+      </ion-row>
+        
+        <ion-item>
+            <ion-label floating>Return Date</ion-label> 
+            <ion-datetime   [placeholder]="todo.title" [(ngModel)]="todo.title" [ngModelOptions]="{standalone: true}"></ion-datetime>
+            <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
+        </ion-item>
+      <button ion-button type="submit" block>Update</button>
+    </form>
 </ion-content>
