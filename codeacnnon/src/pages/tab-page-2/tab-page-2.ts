@@ -1,7 +1,7 @@
 import { Component, OnChanges } from '@angular/core';
 import { ToastService } from '../../services/toast-service'
 import { TabsService } from '../../services/tabs-service';
-import { IonicPage } from 'ionic-angular';
+import { IonicPage,normalizeURL } from 'ionic-angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { Camera,CameraOptions  } from '@ionic-native/camera';
 import { EmailComposer } from '@ionic-native/email-composer';
@@ -17,6 +17,8 @@ declare var SqlServer: any;
 
 export class TabPage2 implements OnChanges {
     params:any = {};
+    returnIdResponse:string = "";
+    subOrderDetails:string = "";
     todo = {
       suborderId: '',
       reverseLabel: '',
@@ -24,6 +26,7 @@ export class TabPage2 implements OnChanges {
       returnDate:''
     };
     currentImage = null;
+    currentImage2 = null;
     currentImageList:any[] = [];
     constructor(private tabsService: TabsService, private toastCtrl: ToastService,public barcodeScanner:BarcodeScanner
     ,private camera: Camera, public emailComposer: EmailComposer) {
@@ -62,12 +65,15 @@ export class TabPage2 implements OnChanges {
     }) 
   }
 
-  getSubOrderIdDetails(subOrderId:string)
+  saveReturns()
   {
+    console.log(this.todo,'save');
     SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip", function(event) {
       console.log(JSON.stringify(event),'sql'); 
-      SqlServer.executeQuery("Meesh_GetSubOrderIdDetail '"+this.todo.subOrderId+"','"+this.todo.reverseLabel+"','", function(suborderData) {
+      // console.log("Save_MeeshoReturns '"+this.todo.subOrderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'","testing");
+      SqlServer.executeQuery("Save_MeeshoReturns '"+this.todo.subOrderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'", function(suborderData) {
         console.log(JSON.parse(suborderData));
+        this.returnIdResponse = JSON.stringify(suborderData);
       }, function(error) {
         console.log("QuerryError : " + JSON.stringify(error));
       });	
@@ -87,24 +93,26 @@ export class TabPage2 implements OnChanges {
     }
 
     this.camera.getPicture(options).then((imageData) => {
-      this.currentImage = imageData;
-      let base64Image = 'data:image/jpeg;base64,' + imageData;
+      this.currentImage = normalizeURL(imageData);
+      // let base64Image = 'data:image/jpeg;base64,' + imageData;
       this.currentImageList.push(this.currentImage);
-      this.currentImage = base64Image;
-      console.log(base64Image,'64');
-      console.log(imageData,'imageData');
+      // this.currentImage2 = base64Image;
+      // console.log(base64Image,'64');
+      console.log(this.currentImage,'imageData');
     }, (err) => {
       // Handle error
       console.log('Image error: ', err);
     });
   }
 
-  saveReturns()
+  
+  getSubOrderIdDetails(subOrderId:string)
   {
     SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip", function(event) {
       console.log(JSON.stringify(event),'sql'); 
-      SqlServer.executeQuery("Save_MeeshoReturns '"+subOrderId+"'", function(suborderData) {
+      SqlServer.executeQuery("Meesh_GetSubOrderIdDetail '"+subOrderId+"'", function(suborderData) {
         console.log(JSON.parse(suborderData));
+        this.subOrderDetails = JSON.stringify(suborderData);
       }, function(error) {
         console.log("QuerryError : " + JSON.stringify(error));
       });	
