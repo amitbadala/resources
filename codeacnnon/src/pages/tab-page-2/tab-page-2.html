@@ -52,7 +52,7 @@
                 <ion-option value="IM">Item Missing</ion-option>
             </ion-select>
         </ion-item>
-      <button ion-button type="submit" block>Update</button>
+      <button ion-button type="submit" block (click)="saveReturns()">Update</button>
     </form>
     <div *ngIf="todo.returnType!='CR'">
     <button default-button round ion-button (click)="sendEmail()">Send Email</button>
@@ -62,7 +62,8 @@
     <ion-card>
         <ion-card-header>Product Images</ion-card-header>
         <ion-card-content *ngFor="let currentItem of currentImageList">
-          <ion-img [src]="currentItem" *ngIf="currentItem" />
+          <img [src]="currentItem" *ngIf="currentItem" />
         </ion-card-content>
+        <img [src]="currentImage" *ngIf="currentItem" />
       </ion-card>
 </ion-content>
