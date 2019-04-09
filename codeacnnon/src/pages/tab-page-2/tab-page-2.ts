@@ -6,6 +6,7 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { Camera,CameraOptions  } from '@ionic-native/camera';
 import { EmailComposer } from '@ionic-native/email-composer';
 import { AlertController } from 'ionic-angular';
+import { LoadingService } from '../../services/loading-service'
 
 declare var SqlServer: any;
 declare let window: any; 
@@ -32,7 +33,8 @@ export class TabPage2 implements OnChanges {
     currentImageList:any[] = [];
     emailAttachmentList:any[]=[];
     constructor(private tabsService: TabsService, private toastCtrl: ToastService,public barcodeScanner:BarcodeScanner
-    ,private camera: Camera, public emailComposer: EmailComposer,public alertCtrl: AlertController) {
+    ,private camera: Camera, public emailComposer: EmailComposer,public alertCtrl: AlertController,
+    private loadingService: LoadingService) {
       this.tabsService.load("tab2").subscribe(snapshot => {
         this.params = snapshot;
       });
@@ -70,6 +72,7 @@ export class TabPage2 implements OnChanges {
 
   saveReturns()
   {
+    this.loadingService.show();
     console.log(this.todo,'save');
     var _suborderId =  this.todo.suborderId;
     var _reverseLabel =  this.todo.reverseLabel;
@@ -82,7 +85,9 @@ export class TabPage2 implements OnChanges {
       console.log("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'","testing");
       SqlServer.executeQuery("Save_MeeshoReturns '"+_suborderId+"','"+_reverseLabel+"','"+_returnType+"','"+_returnDate+"'",(suborderData)=> {
         console.log(JSON.parse(suborderData));
-        this.returnIdResponse = JSON.stringify(suborderData);
+        this.returnIdResponse = JSON.parse(suborderData);
+        this.displaySubOrderDetails('Return Id => '+this.returnIdResponse[0][0]); 
+        this.loadingService.hide();
       }, function(error) {
         console.log("QuerryError : " + JSON.stringify(error));
       });	
@@ -122,9 +127,9 @@ export class TabPage2 implements OnChanges {
     SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event)=> {
       console.log(JSON.stringify(event),'sql'); 
       SqlServer.executeQuery("Meesh_GetSubOrderIdDetail '"+subOrderId+"'",(suborderData)=> {
-        var result = JSON.parse(suborderData);
-        this.subOrderDetails = result[0][0];
-        this.displaySubOrderDetails(result[0][0]);
+        var result = JSON.parse(suborderData); 
+        var details = 'NAME:'+result[0][0].ClientName+' ,SKU:'+result[0][0].SKU;
+        this.displaySubOrderDetails(details);
       }, function(error) {
         console.log("QuerryError : " + JSON.stringify(error));
       });	
@@ -133,11 +138,11 @@ export class TabPage2 implements OnChanges {
     }); 
   }
 
-  displaySubOrderDetails(suborderData){
-    console.log(suborderData);
+  displaySubOrderDetails(subtitle){
+    // console.log(suborderData);
     let alert = this.alertCtrl.create({
        title: 'Details',
-       subTitle: 'NAME:'+suborderData.ClientName+' ,SKU:'+suborderData.SKU,
+       subTitle:subtitle,
        buttons: ['OK']
      });
      alert.present();
