@@ -1,12 +1,14 @@
 import { Component, OnChanges } from '@angular/core';
 import { ToastService } from '../../services/toast-service'
 import { TabsService } from '../../services/tabs-service';
-import { IonicPage,normalizeURL } from 'ionic-angular';
+import { IonicPage } from 'ionic-angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { Camera,CameraOptions  } from '@ionic-native/camera';
 import { EmailComposer } from '@ionic-native/email-composer';
+import { AlertController } from 'ionic-angular';
 
 declare var SqlServer: any;
+declare let window: any; 
 
 @IonicPage()
 @Component({
@@ -18,7 +20,7 @@ declare var SqlServer: any;
 export class TabPage2 implements OnChanges {
     params:any = {};
     returnIdResponse:string = "";
-    subOrderDetails:string = "";
+    subOrderDetails:any;
     todo = {
       suborderId: '',
       reverseLabel: '',
@@ -28,8 +30,9 @@ export class TabPage2 implements OnChanges {
     currentImage = null;
     currentImage2 = null;
     currentImageList:any[] = [];
+    emailAttachmentList:any[]=[];
     constructor(private tabsService: TabsService, private toastCtrl: ToastService,public barcodeScanner:BarcodeScanner
-    ,private camera: Camera, public emailComposer: EmailComposer) {
+    ,private camera: Camera, public emailComposer: EmailComposer,public alertCtrl: AlertController) {
       this.tabsService.load("tab2").subscribe(snapshot => {
         this.params = snapshot;
       });
@@ -68,10 +71,16 @@ export class TabPage2 implements OnChanges {
   saveReturns()
   {
     console.log(this.todo,'save');
-    SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip", function(event) {
+    var _suborderId =  this.todo.suborderId;
+    var _reverseLabel =  this.todo.reverseLabel;
+    var _returnType =  this.todo.returnType;
+    var _returnDate =  this.todo.returnDate;
+    SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event) =>{
       console.log(JSON.stringify(event),'sql'); 
-      // console.log("Save_MeeshoReturns '"+this.todo.subOrderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'","testing");
-      SqlServer.executeQuery("Save_MeeshoReturns '"+this.todo.subOrderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'", function(suborderData) {
+      console.log(this.todo,'todo inside'); 
+      console.log("Save_MeeshoReturns '"+_suborderId+"','"+_reverseLabel+"','"+_returnType+"','"+_returnDate+"'");
+      console.log("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'","testing");
+      SqlServer.executeQuery("Save_MeeshoReturns '"+_suborderId+"','"+_reverseLabel+"','"+_returnType+"','"+_returnDate+"'",(suborderData)=> {
         console.log(JSON.parse(suborderData));
         this.returnIdResponse = JSON.stringify(suborderData);
       }, function(error) {
@@ -85,16 +94,18 @@ export class TabPage2 implements OnChanges {
 
   captureImage() {
     const options: CameraOptions = {
-      // sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
       quality: 100,
       destinationType: this.camera.DestinationType.FILE_URI,
       encodingType: this.camera.EncodingType.JPEG,
-      mediaType: this.camera.MediaType.PICTURE
+      mediaType: this.camera.MediaType.PICTURE,
+      correctOrientation: true,
+      saveToPhotoAlbum: true,
     }
+  
 
     this.camera.getPicture(options).then((imageData) => {
-      this.currentImage = normalizeURL(imageData);
-      // let base64Image = 'data:image/jpeg;base64,' + imageData;
+      this.emailAttachmentList.push(imageData);
+      this.currentImage = window.Ionic.WebView.convertFileSrc(imageData); 
       this.currentImageList.push(this.currentImage);
       // this.currentImage2 = base64Image;
       // console.log(base64Image,'64');
@@ -108,17 +119,28 @@ export class TabPage2 implements OnChanges {
   
   getSubOrderIdDetails(subOrderId:string)
   {
-    SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip", function(event) {
+    SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event)=> {
       console.log(JSON.stringify(event),'sql'); 
-      SqlServer.executeQuery("Meesh_GetSubOrderIdDetail '"+subOrderId+"'", function(suborderData) {
-        console.log(JSON.parse(suborderData));
-        this.subOrderDetails = JSON.stringify(suborderData);
+      SqlServer.executeQuery("Meesh_GetSubOrderIdDetail '"+subOrderId+"'",(suborderData)=> {
+        var result = JSON.parse(suborderData);
+        this.subOrderDetails = result[0][0];
+        this.displaySubOrderDetails(result[0][0]);
       }, function(error) {
         console.log("QuerryError : " + JSON.stringify(error));
       });	
     }, function(error) {
       console.log(JSON.stringify(error),'sqlerror');
     }); 
+  }
+
+  displaySubOrderDetails(suborderData){
+    console.log(suborderData);
+    let alert = this.alertCtrl.create({
+       title: 'Details',
+       subTitle: 'NAME:'+suborderData.ClientName+' ,SKU:'+suborderData.SKU,
+       buttons: ['OK']
+     });
+     alert.present();
   }
 
   sendEmail() {
@@ -136,9 +158,9 @@ export class TabPage2 implements OnChanges {
     }
 
     let email = {
-      to: 'amitbadala07@gmail.com',
+      to: 'supplier@meesho.com',
       // cc: 'amitbadala07@gmail.com',
-      attachments:this.currentImageList ,
+      attachments:this.emailAttachmentList ,
       subject: emailSub,
       body: emailBody,
       isHtml: true

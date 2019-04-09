@@ -28,16 +28,16 @@ export class ItemDetailsPageForm {
 
     // this.doSomething();
 
-    SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip", function(event) {
-      console.log(JSON.stringify(event),'sql'); 
-      SqlServer.executeQuery("Select * from MeeshoReturns", function(event) {
-        console.log(JSON.stringify(event));
-      }, function(error) {
-        console.log("Error : " + JSON.stringify(error));
-      });	
-    }, function(error) {
-      console.log(JSON.stringify(error),'sqlerror');
-    });
+    // SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip", function(event) {
+    //   console.log(JSON.stringify(event),'sql'); 
+    //   SqlServer.executeQuery("Select * from MeeshoReturns", function(event) {
+    //     console.log(JSON.stringify(event));
+    //   }, function(error) {
+    //     console.log("Error : " + JSON.stringify(error));
+    //   });	
+    // }, function(error) {
+    //   console.log(JSON.stringify(error),'sqlerror');
+    // });
 
     // this.getdata();
 
