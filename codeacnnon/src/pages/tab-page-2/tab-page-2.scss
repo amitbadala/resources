@@ -15,6 +15,38 @@
       z-index: 9;
       position: relative;
     }
+
   }
+ 
+  .label-md {
+    margin: 5px 8px 5px 0;
+}
+.datetime-md {
+  padding: 5px 8px 5px 16px;
+}
+.item-label-stacked .text-input-md, .item-label-floating .text-input-md {
+  margin-left: 0;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  width: calc(100% - 8px);
+  font-size: 24px;
+  font-weight: 600;
+} 
+
+.item-input .label-md, .item-select .label-md, .item-datetime .label-md {
+  color: #656565 !important;
+}
+
+.button-md {
+  height: 5.6rem;
+}
+.highlightresults{
+ margin:0px;
+ padding:10px;
+ background-color: yellow;
+}
+.scanButton{
+  background-color: #434343;
+}
 
 }

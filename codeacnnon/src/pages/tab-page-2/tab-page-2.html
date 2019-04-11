@@ -1,19 +1,17 @@
 <!---Settings TAB lauout-2-->
 <ion-content tabPage2>
-  <h3 text-center>Return Products</h3>
+  <h3 *ngIf="clientDetails.length>0" class="highlightresults" text-center>{{clientDetails}}</h3>
     <form (ngSubmit)="logForm()">
   <ion-row>
       <ion-col col-8>
         <ion-item>
             <ion-label floating>SubOrder Id *</ion-label>
-            <ion-input required type="text" [(ngModel)]="todo.suborderId" name="suborderId"></ion-input>
+            <ion-input  (ionBlur)="getSubOrderIdDetails()" required type="text" [(ngModel)]="todo.suborderId" name="suborderId"></ion-input>
             <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
         </ion-item>
       </ion-col>
-      <ion-col col-4>
-          <ion-item>
-          <button ion-button block (click)="scanSubOrder()">Scan</button> 
-          </ion-item>
+      <ion-col col-4> 
+          <button class="scanButton" ion-button block (click)="scanSubOrder()">Scan</button>  
       </ion-col>
     </ion-row>
     <ion-row>
@@ -24,18 +22,30 @@
               <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
           </ion-item>
         </ion-col>
-        <ion-col col-4>
-            <ion-item>
-            <button ion-button block (click)="scanReverseLabel()">Scan</button> 
-            </ion-item>
+        <ion-col col-4> 
+            <button class="scanButton" ion-button block (click)="scanReverseLabel()">Scan</button>  
         </ion-col>
+        <ion-col col-5>
+        <ion-item>
+          <ion-label floating>Return Date</ion-label> 
+          <ion-datetime   [placeholder]="todo.returnDate" [(ngModel)]="todo.returnDate" [ngModelOptions]="{standalone: true}"></ion-datetime>
+          <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
+      </ion-item>
+    </ion-col>
+    <ion-col col-7>
+      <ion-item>
+        <ion-label floating>Select Return Type</ion-label>
+        <ion-select [(ngModel)]="todo.returnType" name="options" multiple="false">
+            <ion-option value="CR">Correct Return</ion-option>
+            <ion-option value="RTO">RTO</ion-option> 
+            <ion-option value="WP">Wrong Product</ion-option>
+            <ion-option value="IM">Item Missing</ion-option>
+        </ion-select>
+    </ion-item>
+  </ion-col>
       </ion-row>
         
-        <ion-item>
-            <ion-label floating>Return Date</ion-label> 
-            <ion-datetime   [placeholder]="todo.returnDate" [(ngModel)]="todo.returnDate" [ngModelOptions]="{standalone: true}"></ion-datetime>
-            <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
-        </ion-item>
+        
         <!-- <ion-item> 
             <ion-select placeholder="Select Return Type">
               <ion-select-option value="CR">Correct Return</ion-select-option>
@@ -44,15 +54,7 @@
             </ion-select>
           </ion-item> -->
 
-          <ion-item no-lines margin-bottom >
-            <ion-label floating>Select Return Type</ion-label>
-            <ion-select [(ngModel)]="todo.returnType" name="options" multiple="false">
-                <ion-option value="CR">Correct Return</ion-option>
-                <ion-option value="WP">Wrong Product</ion-option>
-                <ion-option value="IM">Item Missing</ion-option>
-            </ion-select>
-        </ion-item>
-      <button ion-button type="submit" block (click)="saveReturns()">Update</button>
+      <button ion-button type="submit"  block (click)="saveReturns()">Save Returns</button>
       <span>{{returnIdResponse}}</span>
 
     </form>

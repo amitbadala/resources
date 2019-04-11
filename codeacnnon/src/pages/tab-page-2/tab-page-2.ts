@@ -22,6 +22,7 @@ export class TabPage2 implements OnChanges {
     params:any = {};
     returnIdResponse:string = "";
     subOrderDetails:any;
+    clientDetails:string;
     todo = {
       suborderId: '',
       reverseLabel: '',
@@ -38,6 +39,7 @@ export class TabPage2 implements OnChanges {
       this.tabsService.load("tab2").subscribe(snapshot => {
         this.params = snapshot;
       });
+      this.clientDetails = "";
     }
 
     ngOnChanges(changes: { [propKey: string]: any }) {
@@ -52,7 +54,7 @@ export class TabPage2 implements OnChanges {
       this.barcodeScanner.scan()
       .then((result) => {
         this.todo.suborderId = result.text.toString();
-          this.getSubOrderIdDetails(result.text.toString());
+          this.getSubOrderIdDetails();
       })
       .catch((error) => {
           alert(error);
@@ -73,33 +75,43 @@ export class TabPage2 implements OnChanges {
   saveReturns()
   {
     this.loadingService.show();
-    console.log(this.todo,'save');
-    var _suborderId =  this.todo.suborderId;
-    var _reverseLabel =  this.todo.reverseLabel;
-    var _returnType =  this.todo.returnType;
-    var _returnDate =  this.todo.returnDate;
+    // console.log(this.todo,'save');
+    // var _suborderId =  this.todo.suborderId;
+    // var _reverseLabel =  this.todo.reverseLabel;
+    // var _returnType =  this.todo.returnType;
+    // var _returnDate =  this.todo.returnDate;
     SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event) =>{
-      console.log(JSON.stringify(event),'sql'); 
-      console.log(this.todo,'todo inside'); 
-      console.log("Save_MeeshoReturns '"+_suborderId+"','"+_reverseLabel+"','"+_returnType+"','"+_returnDate+"'");
-      console.log("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'","testing");
-      SqlServer.executeQuery("Save_MeeshoReturns '"+_suborderId+"','"+_reverseLabel+"','"+_returnType+"','"+_returnDate+"'",(suborderData)=> {
-        console.log(JSON.parse(suborderData));
-        this.returnIdResponse = JSON.parse(suborderData);
-        this.displaySubOrderDetails('Return Id => '+this.returnIdResponse[0][0]); 
+      // console.log(JSON.stringify(event),'sql'); 
+      // console.log(this.todo,'todo inside'); 
+      // console.log("Save_MeeshoReturns '"+_suborderId+"','"+_reverseLabel+"','"+_returnType+"','"+_returnDate+"'");
+      //console.log("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'","testing");
+      SqlServer.executeQuery("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'",(suborderData)=> {
+        // console.log(JSON.parse(suborderData));
+        if(suborderData!=null)
+        {
+          // this.returnIdResponse = ;
+          this.displaySubOrderDetails('Return Id => '+JSON.parse(suborderData)[0][0].ReturnId);  
+          this.todo.suborderId = "";
+          this.todo.reverseLabel = "";
+          this.currentImageList = [];
+          this.emailAttachmentList = [];
+          this.clientDetails = "";
+        }  
         this.loadingService.hide();
       }, function(error) {
-        console.log("QuerryError : " + JSON.stringify(error));
+        this.displaySubOrderDetails('Query Error !'+JSON.stringify(error)); 
+        this.loadingService.hide();
       });	
     }, function(error) {
-      console.log(JSON.stringify(error),'sqlerror');
+      this.displaySubOrderDetails('Sql Error !'+JSON.stringify(error)); 
+      this.loadingService.hide();
     });
 
   }
 
   captureImage() {
     const options: CameraOptions = {
-      quality: 100,
+      quality: 65,
       destinationType: this.camera.DestinationType.FILE_URI,
       encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE,
@@ -122,19 +134,30 @@ export class TabPage2 implements OnChanges {
   }
 
   
-  getSubOrderIdDetails(subOrderId:string)
-  {
+  getSubOrderIdDetails()
+  { 
+    this.loadingService.show();
     SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event)=> {
-      console.log(JSON.stringify(event),'sql'); 
-      SqlServer.executeQuery("Meesh_GetSubOrderIdDetail '"+subOrderId+"'",(suborderData)=> {
+      // console.log(JSON.stringify(event),'sql'); 
+      SqlServer.executeQuery("Meesh_GetSubOrderIdDetail '"+this.todo.suborderId+"'",(suborderData)=> {
         var result = JSON.parse(suborderData); 
-        var details = 'NAME:'+result[0][0].ClientName+' ,SKU:'+result[0][0].SKU;
-        this.displaySubOrderDetails(details);
+        if(result != null)
+        {
+          this.clientDetails = 'NAME: '+result[0][0].ClientName+' || SKU:'+result[0][0].SKU; 
+        }
+        else
+        {
+          this.clientDetails = 'SubOrderId not found';
+        }
+        this.loadingService.hide();
+        // this.displaySubOrderDetails(details);
       }, function(error) {
-        console.log("QuerryError : " + JSON.stringify(error));
+        this.displaySubOrderDetails('Query Error !'+JSON.stringify(error)); 
+        this.loadingService.hide();
       });	
     }, function(error) {
-      console.log(JSON.stringify(error),'sqlerror');
+      this.displaySubOrderDetails('Sql Error !'+JSON.stringify(error)); 
+      this.loadingService.hide();
     }); 
   }
 
@@ -151,19 +174,19 @@ export class TabPage2 implements OnChanges {
   sendEmail() {
      let emailBody  = "";
      let emailSub = "";
-    if(this.todo.returnType == "IM")
+    if(this.todo.returnType == "WP")
     {
         emailBody = "We received wrong return on "+this.todo.returnDate+".\n Sub order id - "+this.todo.suborderId +" \n  Reverse Label Id - "+this.todo.reverseLabel+" \n PFA images for reference ";
         emailSub = "Wrong Product Received for Sub Order id ->"+this.todo.suborderId;
     }
-    else (this.todo.returnType == "WP")
+    else if(this.todo.returnType == "IM")
     {
-      emailBody = "We received a return on "+this.todo.returnDate+"However, item was missing from the return .\n Sub order id - "+this.todo.suborderId +" \n  Reverse Label Id - "+this.todo.reverseLabel+" \n PFA images for reference ";
+      emailBody = "We received a return on "+this.todo.returnDate+"\n. However, item was missing from the return .\n Sub order id - "+this.todo.suborderId +" \n  Reverse Label Id - "+this.todo.reverseLabel+" \n PFA images for reference ";
       emailSub = "Item Missing for Sub Order Id ->"+this.todo.suborderId; 
     }
 
     let email = {
-      to: 'supplier@meesho.com',
+      to: 'suppliersupport@meesho.com',
       // cc: 'amitbadala07@gmail.com',
       attachments:this.emailAttachmentList ,
       subject: emailSub,

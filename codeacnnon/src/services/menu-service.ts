@@ -17,7 +17,7 @@ export class MenuService implements IService {
 
   getAllThemes = (): Array<any> => {
     return [
-      {"title" : "List Views", "theme"  : "listViews",  "icon" : "icon-format-align-justify", "listView" : true, "component": "", "singlePage":false},
+      {"title" : "List Views", "theme"  : "listViews",  "icon" : "icon-format-align-justify", "listView" : false, "component": "", "singlePage":false},
       {"title" : "Parallax", "theme"  : "parallax",  "icon" : "icon-format-line-spacing", "listView" : false, "component":"", "singlePage":false},
       {"title" : "Login Pages", "theme"  : "login",  "icon" : "icon-lock-open-outline", "listView" : false, "component":"", "singlePage":false},
       {"title" : "Register Pages", "theme"  : "register",  "icon" : "icon-comment-account", "listView" : false, "component":"", "singlePage":false},
@@ -28,7 +28,7 @@ export class MenuService implements IService {
       {"title" : "Typo + small components", "theme"  : "textViews",  "icon" : "icon-tumblr", "listView" : false, "component":"", "singlePage":false},
       {"title" : "Wizard", "theme"  : "wizard",  "icon" : "icon-cellphone-settings", "listView" : false, "component":"", "singlePage":false},
       {"title" : "Spinner", "theme"  : "spinner",  "icon" : "icon-image-filter-tilt-shift", "listView" : false, "component":"", "singlePage":false},
-      {"title" : "Tabs", "theme"  : "tabs",  "icon" : "icon-view-array", "listView" : false, "component":"", "singlePage":false},
+      {"title" : "Tabs", "theme"  : "tabs",  "icon" : "icon-view-array", "listView" : true, "component":"", "singlePage":false},
       {"title" : "Maps", "theme"  : "maps",  "icon" : "icon-google-maps", "listView" : false, "component":"", "singlePage":false},
       {"title" : "QRCode", "theme"  : "qrcode",  "icon" : "icon-qrcode", "listView" : false, "component":"", "singlePage":false},
       {"title" : "Timeline", "theme"  : "timeline",  "icon" : "icon-timer", "listView" : false, "component":"", "singlePage":false},
