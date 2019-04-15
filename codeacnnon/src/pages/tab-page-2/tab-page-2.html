@@ -1,12 +1,12 @@
 <!---Settings TAB lauout-2-->
 <ion-content tabPage2>
   <h3 *ngIf="clientDetails.length>0" class="highlightresults" text-center>{{clientDetails}}</h3>
-    <form (ngSubmit)="logForm()">
+    <form>
   <ion-row>
       <ion-col col-8>
         <ion-item>
             <ion-label floating>SubOrder Id *</ion-label>
-            <ion-input  (ionBlur)="getSubOrderIdDetails()" required type="text" [(ngModel)]="todo.suborderId" name="suborderId"></ion-input>
+            <ion-input  (ionBlur)="getSubOrderIdDetails()" required type="number" [(ngModel)]="todo.suborderId" name="suborderId"></ion-input>
             <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
         </ion-item>
       </ion-col>
@@ -18,7 +18,7 @@
         <ion-col col-8>
           <ion-item>
               <ion-label floating>Reverse Label Id *</ion-label>
-              <ion-input type="text" [(ngModel)]="todo.reverseLabel" name="reverseLabel"></ion-input>
+              <ion-input type="number" [(ngModel)]="todo.reverseLabel" name="reverseLabel"></ion-input>
               <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
           </ion-item>
         </ion-col>
@@ -54,7 +54,7 @@
             </ion-select>
           </ion-item> -->
 
-      <button ion-button type="submit"  block (click)="saveReturns()">Save Returns</button>
+      <button ion-button type="submit"  block (click)="saveReturns2()">Save Returns</button>
       <span>{{returnIdResponse}}</span>
 
     </form>

@@ -1,12 +1,12 @@
 import { Component, OnChanges } from '@angular/core';
 import { ToastService } from '../../services/toast-service'
 import { TabsService } from '../../services/tabs-service';
+import { LoadingService } from '../../services/loading-service';
 import { IonicPage } from 'ionic-angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { Camera,CameraOptions  } from '@ionic-native/camera';
 import { EmailComposer } from '@ionic-native/email-composer';
-import { AlertController } from 'ionic-angular';
-import { LoadingService } from '../../services/loading-service'
+import { AlertController } from 'ionic-angular'; 
 
 declare var SqlServer: any;
 declare let window: any; 
@@ -29,6 +29,7 @@ export class TabPage2 implements OnChanges {
       returnType:'CR',
       returnDate:''
     };
+    loading:any;
     currentImage = null;
     currentImage2 = null;
     currentImageList:any[] = [];
@@ -40,8 +41,15 @@ export class TabPage2 implements OnChanges {
         this.params = snapshot;
       });
       this.clientDetails = "";
-    }
 
+      SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event) =>{
+       console.log(event);
+      }, (error)=> {
+        this.displaySubOrderDetails('Sql Error !'+JSON.stringify(error)); 
+       console.log(error);
+      });
+    }
+ 
     ngOnChanges(changes: { [propKey: string]: any }) {
       this.params = changes['data'].currentValue;
     }
@@ -72,24 +80,33 @@ export class TabPage2 implements OnChanges {
     }) 
   }
 
-  saveReturns()
+  saveReturns2()
   {
     this.loadingService.show();
-    // console.log(this.todo,'save');
-    // var _suborderId =  this.todo.suborderId;
-    // var _reverseLabel =  this.todo.reverseLabel;
-    // var _returnType =  this.todo.returnType;
-    // var _returnDate =  this.todo.returnDate;
+    SqlServer.executeQuery("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'",(suborderData)=> {
+      if(suborderData!=null && suborderData[0].length>0)
+      {
+       this.displaySubOrderDetails('Return Id => '+JSON.parse(suborderData)[0][0].ReturnId);  
+        this.todo.suborderId = "";
+        this.todo.reverseLabel = "";
+        this.currentImageList = [];
+        this.emailAttachmentList = [];
+        this.clientDetails = "";
+      }  
+      this.loadingService.hide();
+    }, (error)=> {
+      this.displaySubOrderDetails('Query Error !'+JSON.stringify(error)); 
+      this.loadingService.hide();
+    });	 
+  }
+
+  saveReturns()
+  {
+    this.loadingService.show(); 
     SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event) =>{
-      // console.log(JSON.stringify(event),'sql'); 
-      // console.log(this.todo,'todo inside'); 
-      // console.log("Save_MeeshoReturns '"+_suborderId+"','"+_reverseLabel+"','"+_returnType+"','"+_returnDate+"'");
-      //console.log("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'","testing");
-      SqlServer.executeQuery("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'",(suborderData)=> {
-        // console.log(JSON.parse(suborderData));
-        if(suborderData!=null)
-        {
-          // this.returnIdResponse = ;
+       SqlServer.executeQuery("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'",(suborderData)=> {
+         if(suborderData!=null && suborderData[0].length>0)
+        { 
           this.displaySubOrderDetails('Return Id => '+JSON.parse(suborderData)[0][0].ReturnId);  
           this.todo.suborderId = "";
           this.todo.reverseLabel = "";
@@ -98,15 +115,14 @@ export class TabPage2 implements OnChanges {
           this.clientDetails = "";
         }  
         this.loadingService.hide();
-      }, function(error) {
+      }, (error)=> {
         this.displaySubOrderDetails('Query Error !'+JSON.stringify(error)); 
         this.loadingService.hide();
       });	
-    }, function(error) {
+    }, (error)=> {
       this.displaySubOrderDetails('Sql Error !'+JSON.stringify(error)); 
       this.loadingService.hide();
-    });
-
+    }); 
   }
 
   captureImage() {
@@ -137,11 +153,9 @@ export class TabPage2 implements OnChanges {
   getSubOrderIdDetails()
   { 
     this.loadingService.show();
-    SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event)=> {
-      // console.log(JSON.stringify(event),'sql'); 
       SqlServer.executeQuery("Meesh_GetSubOrderIdDetail '"+this.todo.suborderId+"'",(suborderData)=> {
         var result = JSON.parse(suborderData); 
-        if(result != null)
+        if(result != null && result[0].length>0)
         {
           this.clientDetails = 'NAME: '+result[0][0].ClientName+' || SKU:'+result[0][0].SKU; 
         }
@@ -151,14 +165,10 @@ export class TabPage2 implements OnChanges {
         }
         this.loadingService.hide();
         // this.displaySubOrderDetails(details);
-      }, function(error) {
+      }, (error)=> {
         this.displaySubOrderDetails('Query Error !'+JSON.stringify(error)); 
         this.loadingService.hide();
-      });	
-    }, function(error) {
-      this.displaySubOrderDetails('Sql Error !'+JSON.stringify(error)); 
-      this.loadingService.hide();
-    }); 
+      });	  
   }
 
   displaySubOrderDetails(subtitle){
