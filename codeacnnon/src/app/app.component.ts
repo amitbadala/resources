@@ -17,7 +17,7 @@ import { IService } from '../services/IService';
 export class MyApp {
     @ViewChild(Nav) nav: Nav;
 
-    rootPage = "HomePage";
+    rootPage = "ItemDetailsPageTabs";
     pages: any;
     params:any;
     leftMenuTitle: string;
@@ -31,24 +31,26 @@ export class MyApp {
         public modalCtrl: ModalController) {
         this.initializeApp();
         this.pages = menuService.getAllThemes();
+        console.log(this.pages);
         this.leftMenuTitle = menuService.getTitle();
         this.menuService.load(null).subscribe( snapshot => {
             this.params = snapshot;
             if (AppSettings.SHOW_START_WIZARD) {
-              this.presentProfileModal();
+              // this.presentProfileModal();
             }
         });
     }
 
-    presentProfileModal() {
-      const profileModal = this.modalCtrl.create("IntroPage");
-      profileModal.present();
-    }
+    // presentProfileModal() {
+    //   const profileModal = this.modalCtrl.create("IntroPage");
+    //   profileModal.present();
+    // }
 
     initializeApp() {
         this.platform.ready().then(() => {
             // Okay, so the platform is ready and our plugins are available.
             // Here you can do any higher level native things you might need.
+            this.nav.setRoot("ItemDetailsPageTabs");
             this.statusBar.styleDefault();
             this.splashScreen.hide();
             localStorage.setItem("mailChimpLocal", "true");
@@ -56,6 +58,7 @@ export class MyApp {
     }
 
     openPage(page) {
+      // console.log(page,'page');
     // close the menu when clicking a link from the menu
     // navigate to the new page if it is not the current page
     if (page.singlePage) {

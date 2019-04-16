@@ -7,8 +7,12 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { Camera,CameraOptions  } from '@ionic-native/camera';
 import { EmailComposer } from '@ionic-native/email-composer';
 import { AlertController } from 'ionic-angular'; 
+import { HttpClient } from "@angular/common/http";
 
-declare var SqlServer: any;
+
+import { Observable} from 'rxjs/Observable';
+
+// declare var SqlServer: any;
 declare let window: any; 
 
 @IonicPage()
@@ -34,20 +38,21 @@ export class TabPage2 implements OnChanges {
     currentImage2 = null;
     currentImageList:any[] = [];
     emailAttachmentList:any[]=[];
+    employees: Observable < any[] > ;
     constructor(private tabsService: TabsService, private toastCtrl: ToastService,public barcodeScanner:BarcodeScanner
     ,private camera: Camera, public emailComposer: EmailComposer,public alertCtrl: AlertController,
-    private loadingService: LoadingService) {
+    private loadingService: LoadingService,private http: HttpClient) {
       this.tabsService.load("tab2").subscribe(snapshot => {
         this.params = snapshot;
       });
       this.clientDetails = "";
 
-      SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event) =>{
-       console.log(event);
-      }, (error)=> {
-        this.displaySubOrderDetails('Sql Error !'+JSON.stringify(error)); 
-       console.log(error);
-      });
+      // SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event) =>{
+      //  console.log(event);
+      // }, (error)=> {
+      //   this.displaySubOrderDetails('Sql Error !'+JSON.stringify(error)); 
+      //  console.log(error);
+      // });
     }
  
     ngOnChanges(changes: { [propKey: string]: any }) {
@@ -71,58 +76,69 @@ export class TabPage2 implements OnChanges {
 
   scanReverseLabel()
   {
-    this.barcodeScanner.scan()
-    .then((result) => {
-      this.todo.reverseLabel = result.text.toString(); 
-    })
-    .catch((error) => {
-        alert(error);
-    }) 
+    this.scanReverseLabel2().subscribe((tempdate) => {
+      console.log(tempdate);
+  }), err => {
+      console.log(err);
+  }
+
+  }
+  scanReverseLabel2()
+  {
+   return this.http.get<any[]>("https://meeshoapiservices20190413104538.azurewebsites.net/api/base/GetDailyAccounts");
+    // console.log(test,'test');
+    // this.barcodeScanner.scan()
+    // .then((result) => {
+    //   this.todo.reverseLabel = result.text.toString(); 
+    // })
+    // .catch((error) => {
+    //     alert(error);
+    // }) 
   }
 
   saveReturns2()
   {
     this.loadingService.show();
-    SqlServer.executeQuery("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'",(suborderData)=> {
-      if(suborderData!=null && suborderData[0].length>0)
-      {
-       this.displaySubOrderDetails('Return Id => '+JSON.parse(suborderData)[0][0].ReturnId);  
-        this.todo.suborderId = "";
-        this.todo.reverseLabel = "";
-        this.currentImageList = [];
-        this.emailAttachmentList = [];
-        this.clientDetails = "";
-      }  
-      this.loadingService.hide();
-    }, (error)=> {
-      this.displaySubOrderDetails('Query Error !'+JSON.stringify(error)); 
-      this.loadingService.hide();
-    });	 
+    // SqlServer.executeQuery("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'",(suborderData)=> {
+    //   if(suborderData!=null && suborderData[0].length>0)
+    //   {
+    //    this.displaySubOrderDetails('Return Id => '+JSON.parse(suborderData)[0][0].ReturnId);  
+    //     this.todo.suborderId = "";
+    //     this.todo.reverseLabel = "";
+    //     this.currentImageList = [];
+    //     this.emailAttachmentList = [];
+    //     this.clientDetails = "";
+    //   }  
+    //   this.loadingService.hide();
+    // }, (error)=> {
+    //   this.displaySubOrderDetails('Query Error !'+JSON.stringify(error)); 
+    //   this.loadingService.hide();
+    // });	 
   }
 
   saveReturns()
   {
     this.loadingService.show(); 
-    SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event) =>{
-       SqlServer.executeQuery("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'",(suborderData)=> {
-         if(suborderData!=null && suborderData[0].length>0)
-        { 
-          this.displaySubOrderDetails('Return Id => '+JSON.parse(suborderData)[0][0].ReturnId);  
-          this.todo.suborderId = "";
-          this.todo.reverseLabel = "";
-          this.currentImageList = [];
-          this.emailAttachmentList = [];
-          this.clientDetails = "";
-        }  
-        this.loadingService.hide();
-      }, (error)=> {
-        this.displaySubOrderDetails('Query Error !'+JSON.stringify(error)); 
-        this.loadingService.hide();
-      });	
-    }, (error)=> {
-      this.displaySubOrderDetails('Sql Error !'+JSON.stringify(error)); 
-      this.loadingService.hide();
-    }); 
+    // SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event) =>{
+    //    SqlServer.executeQuery("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'",(suborderData)=> {
+    //      if(suborderData!=null && suborderData[0].length>0)
+    //     { 
+    //       this.displaySubOrderDetails('Return Id => '+JSON.parse(suborderData)[0][0].ReturnId);  
+    //       this.todo.suborderId = "";
+    //       this.todo.reverseLabel = "";
+    //       this.currentImageList = [];
+    //       this.emailAttachmentList = [];
+    //       this.clientDetails = "";
+    //     }  
+    //     this.loadingService.hide();
+    //   }, (error)=> {
+    //     this.displaySubOrderDetails('Query Error !'+JSON.stringify(error)); 
+    //     this.loadingService.hide();
+    //   });	
+    // }, (error)=> {
+    //   this.displaySubOrderDetails('Sql Error !'+JSON.stringify(error)); 
+    //   this.loadingService.hide();
+    // }); 
   }
 
   captureImage() {
@@ -153,22 +169,15 @@ export class TabPage2 implements OnChanges {
   getSubOrderIdDetails()
   { 
     this.loadingService.show();
-      SqlServer.executeQuery("Meesh_GetSubOrderIdDetail '"+this.todo.suborderId+"'",(suborderData)=> {
-        var result = JSON.parse(suborderData); 
-        if(result != null && result[0].length>0)
-        {
-          this.clientDetails = 'NAME: '+result[0][0].ClientName+' || SKU:'+result[0][0].SKU; 
-        }
-        else
-        {
-          this.clientDetails = 'SubOrderId not found';
-        }
-        this.loadingService.hide();
-        // this.displaySubOrderDetails(details);
-      }, (error)=> {
-        this.displaySubOrderDetails('Query Error !'+JSON.stringify(error)); 
-        this.loadingService.hide();
-      });	  
+    this.http.get<string>("https://meeshoapiservices20190413104538.azurewebsites.net/api/base/GetSubOrderbyid?suborderid="+this.todo.suborderId)
+    .subscribe((suborderIdDetails)=>{
+    this.clientDetails = suborderIdDetails
+    this.loadingService.hide();
+    }),
+    err=>{
+      console.log(err);
+      this.loadingService.hide();
+    }; 	  
   }
 
   displaySubOrderDetails(subtitle){

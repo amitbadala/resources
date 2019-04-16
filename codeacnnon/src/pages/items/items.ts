@@ -148,7 +148,7 @@ export class ItemsPage {
 
     selectPageForOpen(value: string): any {
       let page;
-
+      console.log(value,'value');
       switch (value) {
         case "spinner":
           page = "ItemDetailsPageSpinner";

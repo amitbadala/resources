@@ -6,7 +6,7 @@
       <ion-col col-8>
         <ion-item>
             <ion-label floating>SubOrder Id *</ion-label>
-            <ion-input  (ionBlur)="getSubOrderIdDetails()" required type="number" [(ngModel)]="todo.suborderId" name="suborderId"></ion-input>
+            <ion-input  (ionBlur)="getSubOrderIdDetails()" required type="text" [(ngModel)]="todo.suborderId" name="suborderId"></ion-input>
             <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
         </ion-item>
       </ion-col>
@@ -58,15 +58,21 @@
       <span>{{returnIdResponse}}</span>
 
     </form>
-    <div *ngIf="todo.returnType!='CR'">
+    <div *ngIf="todo.returnType!='CR' && todo.returnType!='RTO'">
     <button default-button round ion-button (click)="sendEmail()">Send Email</button>
     <button default-button round ion-button (click)="captureImage()">Capture</button>
-    </div>
+   
 
     <ion-card>
         <ion-card-header>Product Images</ion-card-header>
-        <ion-card-content *ngFor="let currentItem of currentImageList">
-          <img [src]="currentItem" *ngIf="currentItem" />
-        </ion-card-content> 
+        <ion-row>
+          <ion-col col-6 *ngFor="let currentItem of currentImageList">
+                <ion-card-content>
+                    <img [src]="currentItem" *ngIf="currentItem" />
+                  </ion-card-content> 
+          </ion-col>
+          </ion-row>
+         
       </ion-card>
+    </div>
 </ion-content>
