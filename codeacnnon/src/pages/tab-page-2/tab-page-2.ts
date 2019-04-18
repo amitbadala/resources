@@ -1,4 +1,4 @@
-import { Component, OnChanges } from '@angular/core';
+import { Component, OnChanges, Injectable } from '@angular/core';
 import { ToastService } from '../../services/toast-service'
 import { TabsService } from '../../services/tabs-service';
 import { LoadingService } from '../../services/loading-service';
@@ -7,8 +7,8 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { Camera,CameraOptions  } from '@ionic-native/camera';
 import { EmailComposer } from '@ionic-native/email-composer';
 import { AlertController } from 'ionic-angular'; 
-import { HttpClient } from "@angular/common/http";
-
+import { HttpClient,HttpHeaders} from "@angular/common/http";
+import{MeeshoentityProvider} from "../../providers/meeshoentity/meeshoentity"
 
 import { Observable} from 'rxjs/Observable';
 
@@ -20,7 +20,7 @@ declare let window: any;
   templateUrl: 'tab-page-2.html',
   providers: [TabsService, ToastService,EmailComposer]
 })
-
+ 
 
 export class TabPage2 implements OnChanges {
     params:any = {};
@@ -33,6 +33,7 @@ export class TabPage2 implements OnChanges {
       returnType:'CR',
       returnDate:''
     };
+    meeshoDto:MeeshoentityProvider = new MeeshoentityProvider();
     loading:any;
     currentImage = null;
     currentImage2 = null;
@@ -46,7 +47,7 @@ export class TabPage2 implements OnChanges {
         this.params = snapshot;
       });
       this.clientDetails = "";
-
+   
       // SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event) =>{
       //  console.log(event);
       // }, (error)=> {
@@ -118,7 +119,28 @@ export class TabPage2 implements OnChanges {
 
   saveReturns()
   {
-    this.loadingService.show(); 
+    
+    this.loadingService.show();   
+    this.meeshoDto.DateOfReturn = this.todo.returnDate;
+    this.meeshoDto.SuborderId =  this.todo.suborderId;
+    this.meeshoDto.ReverseLabelId = this.todo.reverseLabel;
+    this.meeshoDto.ReturnType = this.todo.returnType;
+    this.saveReturnService()
+        .subscribe((returnId)=>{
+        // console.log(returnId);
+        this.displaySubOrderDetails('Saved Successfully => '+returnId);  
+        this.todo.suborderId = "";
+        this.todo.reverseLabel = "";
+        this.currentImageList = [];
+        this.emailAttachmentList = [];
+        this.clientDetails = "";
+        this.loadingService.hide();
+    }),
+    err=>{
+      console.log(err);
+      this.loadingService.hide();
+      this.displaySubOrderDetails('Something went wrong'+err);
+    }; 	 
     // SqlServer.init("182.50.133.111", "SQLEXPRESS", "webeskyuser", "24140246", "webesky_Cartrip",(event) =>{
     //    SqlServer.executeQuery("Save_MeeshoReturns '"+this.todo.suborderId+"','"+this.todo.reverseLabel+"','"+this.todo.returnDate+"','"+this.todo.returnType+"'",(suborderData)=> {
     //      if(suborderData!=null && suborderData[0].length>0)
@@ -139,6 +161,12 @@ export class TabPage2 implements OnChanges {
     //   this.displaySubOrderDetails('Sql Error !'+JSON.stringify(error)); 
     //   this.loadingService.hide();
     // }); 
+  }
+
+  saveReturnService()
+  {
+    const headers = new HttpHeaders().set('content-type', 'application/json');  
+    return this.http.post<string>("http://localhost:52648/api/base/SaveReturn",this.meeshoDto,{headers}); 
   }
 
   captureImage() {
