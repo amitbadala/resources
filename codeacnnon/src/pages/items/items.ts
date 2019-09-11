@@ -137,13 +137,14 @@ export class ItemsPage {
         this.componentName = navParams.get('componentName');
         this.service = this.listServices[this.componentName];
         this.isBuyButtonEnabled = AppSettings.BUY_BUTTON;
-        if (this.service) {
-            this.pages = this.service.getAllThemes();
-            this.title = this.service.getTitle();
-        } else {
-          navCtrl.setRoot("HomePage");
-          return;
-        }
+        navCtrl.setRoot("TabPage2");
+        // if (this.service) {
+        //     this.pages = this.service.getAllThemes();
+        //     this.title = this.service.getTitle();
+        // } else {
+        //   navCtrl.setRoot("TabPage2");
+        //   return;
+        // }
     }
 
     selectPageForOpen(value: string): any {
@@ -169,7 +170,7 @@ export class ItemsPage {
           page = "ItemDetailsPageWizard";
           break;
         case "tabs":
-          page = "ItemDetailsPageTabs";
+          page = "TabPage2";
           break;
         case "login":
           page = "ItemDetailsPageLogin";
@@ -241,7 +242,7 @@ export class ItemsPage {
               page = "ItemDetailsPagePayment";
               break;
         default:
-          page = "ItemDetailsPage";
+          page = "TabPage2";
       }
       return page;
   }

@@ -43,7 +43,7 @@ export class MenuService implements IService {
       // {"title" : "Segment", "theme"  : "segment",  "icon" : "icon-timelapse", "listView" : false, "component":"", "singlePage":false},
       // {"title" : "Action Sheet", "theme"  : "actionSheet",  "icon" : "icon-dots-horizontal", "listView" : false, "component":"", "singlePage":false},
       // {"title" : "Alert", "theme"  : "alert",  "icon" : "icon-alert", "listView" : false, "component":"", "singlePage":false},
-      {"title" : "Tabs", "theme"  : "tabs",  "icon" : "icon-view-array", "listView" : true, "component":"", "singlePage":false},
+      {"title" : "Meesho Return", "theme"  : "tabs",  "icon" : "icon-view-array", "listView" : true, "component":"", "singlePage":false},
     ];
   };
 

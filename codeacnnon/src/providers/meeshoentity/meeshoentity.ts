@@ -11,12 +11,16 @@ export class MeeshoentityProvider {
   SuborderId:string;
   ReverseLabelId:string;
   DateOfReturn:string;
-  ReturnType:string; 
+  ReturnType:string;
+  Details:string; 
+  SavedReturnId:string;
   constructor() {
   this.SuborderId="",
   this.ReverseLabelId="",
   this.DateOfReturn="",
   this.ReturnType="CR"; 
+  this.Details="";
+  this.SavedReturnId="0";
   }
 
 }

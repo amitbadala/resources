@@ -1,4 +1,13 @@
 <!---Settings TAB lauout-2-->
+<ion-header>
+  <ion-navbar>
+      <button ion-button menuToggle>
+    <ion-icon name="menu"></ion-icon>
+  </button>
+      <ion-title>Meesho Returns</ion-title>
+  </ion-navbar>
+ 
+</ion-header>
 <ion-content tabPage2>
   <h3 *ngIf="clientDetails.length>0" class="highlightresults" text-center>{{clientDetails}}</h3>
     <form>
@@ -6,8 +15,7 @@
       <ion-col col-8>
         <ion-item>
             <ion-label floating>SubOrder Id *</ion-label>
-            <ion-input  (ionBlur)="getSubOrderIdDetails()" required type="text" [(ngModel)]="todo.suborderId" name="suborderId"></ion-input>
-            <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
+            <ion-input  (ionBlur)="getSubOrderIdDetails()" required type="text" [(ngModel)]="meeshoDto.SuborderId" name="SuborderId"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col col-4> 
@@ -18,7 +26,7 @@
         <ion-col col-8>
           <ion-item>
               <ion-label floating>Reverse Label Id *</ion-label>
-              <ion-input type="number" [(ngModel)]="todo.reverseLabel" name="reverseLabel"></ion-input>
+              <ion-input type="tel" [(ngModel)]="meeshoDto.ReverseLabelId" name="reverseLabel"></ion-input>
               <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
           </ion-item>
         </ion-col>
@@ -28,14 +36,14 @@
         <ion-col col-5>
         <ion-item>
           <ion-label floating>Return Date</ion-label> 
-          <ion-datetime   [placeholder]="todo.returnDate" [(ngModel)]="todo.returnDate" [ngModelOptions]="{standalone: true}"></ion-datetime>
+          <ion-datetime   [placeholder]="meeshoDto.DateOfReturn" [(ngModel)]="meeshoDto.DateOfReturn" [ngModelOptions]="{standalone: true}"></ion-datetime>
           <!-- <ion-label error-field color="secondary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label> -->
       </ion-item>
     </ion-col>
     <ion-col col-7>
       <ion-item>
         <ion-label floating>Select Return Type</ion-label>
-        <ion-select [(ngModel)]="todo.returnType" name="options" multiple="false">
+        <ion-select [(ngModel)]="meeshoDto.ReturnType" name="options" multiple="false">
             <ion-option value="CR">Correct Return</ion-option>
             <ion-option value="RTO">RTO</ion-option> 
             <ion-option value="WP">Wrong Product</ion-option>
@@ -44,21 +52,21 @@
     </ion-item>
   </ion-col>
       </ion-row>
-        
-        
-        <!-- <ion-item> 
-            <ion-select placeholder="Select Return Type">
-              <ion-select-option value="CR">Correct Return</ion-select-option>
-              <ion-select-option value="WP">Wrong Product</ion-select-option>
-              <ion-select-option value="IM">Item Missing</ion-select-option>
-            </ion-select>
-          </ion-item> -->
-
+         
+      <ion-row>
+          <ion-col col-5>
+              <ion-item>
+                  <ion-label>Show</ion-label>
+                  <ion-toggle [(ngModel)]="showReturnList" name="showReturnList"></ion-toggle>
+                </ion-item>
+          </ion-col>
+          <ion-col col-7>
       <button ion-button  block (click)="saveReturns()">Save Returns</button>
-      <span>{{returnIdResponse}}</span>
+    </ion-col>
+      </ion-row>
 
     </form>
-    <div *ngIf="todo.returnType!='CR' && todo.returnType!='RTO'">
+    <div *ngIf="meeshoDto.ReturnType!='CR' && meeshoDto.ReturnType!='RTO'">
     <button default-button round ion-button (click)="sendEmail()">Send Email</button>
     <button default-button round ion-button (click)="captureImage()">Capture</button>
    
@@ -74,5 +82,19 @@
           </ion-row>
          
       </ion-card>
+
     </div>
+    
+    <ion-card *ngIf="showReturnList">
+        <ion-list>
+            <ion-list-header>
+              <ion-label>List of Returned entered now ! => {{returnList.length}}</ion-label>
+            </ion-list-header>
+            <ion-item *ngFor="let item of returnList">
+              <h5>{{item.SavedReturnId +' => ' + item.SuborderId + ' (' +item.ReverseLabelId+')'}}</h5>
+              <p>{{item.Details}}</p>
+              <p>{{item.ReturnType}}</p>
+            </ion-item>
+          </ion-list>
+          </ion-card>
 </ion-content>

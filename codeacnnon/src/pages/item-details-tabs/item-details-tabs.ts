@@ -21,8 +21,7 @@ export class ItemDetailsPageTabs {
       this.params = this.service.prepareParams(this.page, navCtrl);
 
       if (this.params.tabsLayout1) {
-        this.params.data = [
-          { page: "TabPage1", title: "RTO" },
+        this.params.data = [ 
           { page: "TabPage2", title: "Return" }
         ];
       }
